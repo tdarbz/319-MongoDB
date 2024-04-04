@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Review App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, select, textarea {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Review App</h1>
+    <form id="reviewForm">
+        <label for="movie">Movie Title:</label>
+        <input type="text" id="movie" name="movie" required>
+        
+        <label for="user">Your Name:</label>
+        <input type="text" id="user" name="user" required>
+        
+        <label for="rating">Rating:</label>
+        <select id="rating" name="rating" required>
+            <option value="">Select a rating</option>
+            <option value="1">1 - Awful</option>
+            <option value="2">2 - Meh</option>
+            <option value="3">3 - Good</option>
+            <option value="4">4 - Great</option>
+            <option value="5">5 - Excellent</option>
+        </select>
+        
+        <label for="reviewText">Review:</label>
+        <textarea id="reviewText" name="reviewText" rows="4" required></textarea>
+        
+        <button type="submit">Submit Review</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        const form = document.getElementById('reviewForm');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const movie = form.elements['movie'].value;
+            const user = form.elements['user'].value;
+            const rating = form.elements['rating'].value;
+            const reviewText = form.elements['reviewText'].value;
+
+            try {
+                const response = await fetch('/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ movie, user, rating, reviewText })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit review');
+                }
+
+                messageDiv.textContent = 'Review submitted successfully';
+                form.reset();
+            } catch (error) {
+                console.error(error);
+                messageDiv.textContent = 'An error occurred. Please try again later.';
+            }
+        });
+    </script>
+</body>
+</html>
